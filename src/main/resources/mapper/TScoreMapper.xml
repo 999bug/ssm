@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.score.dao.TScoreMapper">
+
+    <resultMap id="BaseResultMap" type="com.score.bean.TScore">
+        <id column="score_id" property="scoreId" jdbcType="INTEGER"/>
+        <result column="score_value" property="scoreValue" jdbcType="INTEGER"/>
+        <result column="subject_name" property="subjectName" jdbcType="VARCHAR"/>
+        <result column="student_id" property="studentId" jdbcType="BIGINT"/>
+        <result column="student_name" property="studentName" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="ScoreResultMap" type="com.score.bean.TScore">
+        <id column="subject_id" property="subjectId" jdbcType="INTEGER"/>
+        <result column="score_value" property="scoreValue" jdbcType="INTEGER"/>
+        <result column="subject_name" property="subjectName" jdbcType="VARCHAR"/>
+        <result column="subject_type" property="subjectType" jdbcType="INTEGER"/>
+        <result column="student_name" property="studentName" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        DELETE FROM
+        t_score
+        WHERE score_id = #{scoreId,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" parameterType="com.score.bean.TScore">
+        <selectKey resultType="java.lang.Integer" keyProperty="scoreId"
+            order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into t_score (score_value, subject_id, student_id
+        )
+        values
+        (#{scoreValue,jdbcType=INTEGER}, #{subjectId,jdbcType=VARCHAR},
+        #{studentId,jdbcType=BIGINT}
+        )
+    </insert>
+
+    <update id="updateByPrimaryKey" parameterType="com.score.bean.TScore">
+        UPDATE t_score
+        SET
+        score_value = #{scoreValue,jdbcType=INTEGER},
+        subject_id =
+        #{subjectId,jdbcType=VARCHAR},
+        student_id =
+        #{studentId,jdbcType=BIGINT}
+        WHERE score_id =
+        #{scoreId,jdbcType=INTEGER}
+    </update>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap"
+        parameterType="java.lang.Integer">
+        SELECT
+        score_id,
+        score_value,
+        subject_id,
+        student_id
+        FROM t_score
+        WHERE score_id = #{scoreId,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectByStudentId" resultMap="ScoreResultMap"
+        parameterType="java.lang.Long">
+        SELECT
+        score_id,
+        score_value,
+        t_score.subject_id,
+        subject_name,
+        subject_type
+        FROM t_score
+        JOIN t_subject ON t_score.subject_id = t_subject.subject_id
+        WHERE student_id = #{studentId,jdbcType=BIGINT}
+    </select>
+
+    <select id="selectAll" resultMap="BaseResultMap" parameterType="com.score.bean.TScore">
+        select score_id, score_value, c.subject_id,subject_name, student_id,student_name
+        from
+        t_score c LEFT JOIN t_student s ON s.student_no=c.student_id
+        LEFT JOIN t_subject sub on c.subject_id=sub.subject_id
+        where 1=1
+        <if test="studentName !=null and studentName !=''">
+            and student_name like concat('%',#{studentName},'%')
+        </if>
+        <if test="studentId !=null and studentId !=''">
+            and student_id =#{studentId}
+        </if>
+    </select>
+    <select id="countByType" resultType="java.lang.Integer"></select>
+
+</mapper>

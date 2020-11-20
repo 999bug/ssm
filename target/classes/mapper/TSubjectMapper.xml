@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.score.dao.TSubjectMapper">
+    <resultMap id="BaseResultMap" type="com.score.bean.TSubject">
+        <id column="subject_id" jdbcType="INTEGER" property="subjectId"/>
+        <result column="subject_name" jdbcType="VARCHAR" property="subjectName"/>
+        <result column="subject_type" jdbcType="VARCHAR" property="subjectType"/>
+        <result column="subject_info" jdbcType="VARCHAR" property="subjectInfo"/>
+    </resultMap>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+
+        DELETE FROM t_subject
+        WHERE subject_id = #{subjectId,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" parameterType="com.score.bean.TSubject">
+        INSERT INTO t_subject (subject_id, subject_name, subject_type, subject_info
+        )
+        VALUES (#{subjectId,jdbcType=INTEGER}, #{subjectName,jdbcType=VARCHAR},
+        #{subjectType,jdbcType=VARCHAR},
+        #{subjectInfo,jdbcType=VARCHAR}
+        )
+    </insert>
+    <update id="updateByPrimaryKey" parameterType="com.score.bean.TSubject">
+        UPDATE t_subject
+        SET subject_name = #{subjectName,jdbcType=VARCHAR},
+        subject_type = #{subjectType,jdbcType=VARCHAR},
+        subject_info = #{subjectInfo,jdbcType=VARCHAR}
+        WHERE subject_id = #{subjectId,jdbcType=INTEGER}
+    </update>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        SELECT
+        subject_id,
+        subject_name,
+        subject_type,
+        subject_info
+        FROM t_subject
+        WHERE subject_id = #{subjectId,jdbcType=INTEGER}
+    </select>
+    <select id="selectAll" resultMap="BaseResultMap" parameterType="com.score.bean.TSubject">
+        select subject_id,subject_name, subject_type, subject_info
+        from t_subject
+        where 1=1
+        <if test="subjectName !=null and subjectName !=''">
+            and subject_name like concat('%',#{subjectName},'%')
+        </if>
+    </select>
+
+    <!--<select id="selectloginStudent" resultMap="BaseResultMap" parameterType="com.score.bean.TSubject">-->
+    <!--select student_no, student_name, student_sex, stu_pass-->
+    <!--from t_student-->
+    <!--where 1=1-->
+    <!--<if test="studentNo !=null and studentNo !=''">-->
+    <!--and student_no =#{studentNo}-->
+    <!--</if>-->
+    <!--<if test="stuPass !=null and stuPass !=''">-->
+    <!--and stu_pass =#{stuPass}-->
+    <!--</if>-->
+    <!--</select>-->
+</mapper>
